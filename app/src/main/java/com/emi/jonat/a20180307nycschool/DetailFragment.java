@@ -50,6 +50,8 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Activity activity = getActivity();
+
+        //inflating our appbar here and enabling features.
         CollapsingToolbarLayout appbarlayout = (CollapsingToolbarLayout)
                 activity.findViewById(R.id.toolbar_layout);
         if(appbarlayout != null && activity instanceof  DetailActivity){
@@ -64,6 +66,7 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
 
         mLayoutInflater = inflater;
 
+        //getting bundle information if available or intent with passed pojo
         Bundle arguments = getArguments();
         Intent intent = getActivity().getIntent();
 
@@ -75,6 +78,7 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
                 mSchool = intent.getParcelableExtra(DetailActivity.Args);
             }
 
+            //initializing all our views here.
             ViewsList(mSchool, rootView);
 
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(),
@@ -88,6 +92,7 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
             mRecyclerView.setNestedScrollingEnabled(false);
 
 
+            //restoring our state here if screen is rotated and passing data.
             if(savedInstanceState != null && savedInstanceState.containsKey(EXTRA_SAT)){
                 satlist = savedInstanceState.getParcelableArrayList(EXTRA_SAT);
 
@@ -100,6 +105,7 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
         return rootView;
     }
 
+    //initializing asych with our parameter id, passing School Pojo dbn id//
     private void FetchSat(View rootView) {
         FetchSatAsync satAsync = new FetchSatAsync(this);
         satAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mSchool.getDbn());
@@ -111,6 +117,7 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         satlist = satAdapter.getmSatList();
+        //adding data for our state instance here
         if(satlist != null || !satlist.isEmpty()){
             outState.putParcelableArrayList(EXTRA_SAT, null);
         }
@@ -118,6 +125,7 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
     }
 
 
+    //our view Method, getting all ids of our views.
     private void ViewsList(School school, View view){
         SchoolName = view.findViewById(R.id.detail_title);
         detail_campus = view.findViewById(R.id.detail_campus_textview);
@@ -131,6 +139,7 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
         description = view.findViewById(R.id.description);
         NData = view.findViewById(R.id.empty_state);
 
+        //ensuring our data is not null before passing values to views.
         if(school != null){
             String mtitle = school.getTitle();
             String mcampus = school.getCampus();
@@ -138,21 +147,49 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
             String mgrades = school.getGrades();
             String minterest = school.getInterest();
             String mdescription = school.getDescription();
-            SchoolName.setText(mtitle);
+
+            if(mtitle != null) {
+                SchoolName.setText(mtitle);
+            }else {
+                SchoolName.setText(getResources().getString(R.string.unavailable));
+            }
+
             detail_campus.setText(getResources().getString(R.string.campus));
+
             if(mcampus != null) {
                 campus.setText(mcampus);
             }else{
                 campus.setText(getResources().getString(R.string.unavailable));
             }
-            detail_phone_number.setText(getResources().getString(R.string.phone));
-            phone_number.setText(phoneNumber);
-            detail_grades.setText(getResources().getString(R.string.grades));
-            grades.setText(mgrades);
-            detail_interest.setText(getResources().getString(R.string.specialize));
-            interest.setText(minterest);
-            description.setText(mdescription);
 
+            detail_phone_number.setText(getResources().getString(R.string.phone));
+
+            if(phoneNumber != null) {
+                phone_number.setText(phoneNumber);
+            }else{
+                phone_number.setText(getResources().getString(R.string.unavailable));
+            }
+            detail_grades.setText(getResources().getString(R.string.grades));
+
+            if(mgrades != null) {
+                grades.setText(mgrades);
+            } else{
+                grades.setText(getResources().getString(R.string.unavailable));
+            }
+
+            detail_interest.setText(getResources().getString(R.string.specialize));
+            if(minterest != null) {
+                interest.setText(minterest);
+            }else {
+                interest.setText(getResources().getString(R.string.unavailable));
+            }
+
+            if (mdescription != null) {
+                description.setText(mdescription);
+
+            }else {
+                description.setText(getResources().getString(R.string.unavailable));
+            }
         }
 
     }
@@ -162,13 +199,17 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
     public void onFetchFinished(Sat sat) {
         if (sat != null) {
             satAdapter.clear();
+            //making sure our dbn is not null before passing  objects to adapter
             if (sat.getDbn() != null) {
                 satAdapter.add(sat);
             } else{
+                //dbn is null or no data is found, we pass our empty state to indicate unavailability//
                 NData.setVisibility(View.VISIBLE);
             }
 
         }else {
+
+            //if async fails, we will be notified by passing an error message.
                 Log.d(TAG, getResources().getString(R.string.unable));
             }
 

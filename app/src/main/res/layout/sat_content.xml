@@ -39,7 +39,7 @@
             android:textSize="@dimen/detail_size"
             android:layout_columnWeight="5"
             android:layout_gravity="fill"
-            tools:text="19" />
+            tools:text="@string/number" />
 
         <TextView
             android:id="@+id/detail_math_textview"
@@ -62,7 +62,7 @@
             android:textSize="@dimen/detail_size"
             android:layout_columnWeight="5"
             android:layout_gravity="fill"
-            tools:text="19" />
+            tools:text="@string/number" />
 
         <TextView
             android:id="@+id/detail_writing_textview"
@@ -85,7 +85,7 @@
             android:textSize="@dimen/detail_size"
             android:layout_columnWeight="5"
             android:layout_gravity="fill"
-            tools:text="19" />
+            tools:text="@string/number" />
 
         <TextView
             android:id="@+id/detail_reading_textview"
@@ -108,7 +108,7 @@
             android:textSize="@dimen/detail_size"
             android:layout_columnWeight="5"
             android:layout_gravity="fill"
-            tools:text="19" />
+            tools:text="@string/number" />
 
 
     </GridLayout>

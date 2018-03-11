@@ -8,6 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class ApiClient {
+    //setting up Retrofit Client.
     public static final String BASE_URL = "https://data.cityofnewyork.us/resource/";
     private static Retrofit retrofit = null;
 

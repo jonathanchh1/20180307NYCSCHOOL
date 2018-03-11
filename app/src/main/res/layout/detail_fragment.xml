@@ -59,7 +59,7 @@
                 android:textSize="@dimen/detail_size"
                 android:layout_columnWeight="8"
                 android:layout_gravity="fill"
-                tools:text="19" />
+                tools:text="@string/number" />
 
 
             <TextView
@@ -83,7 +83,7 @@
                 android:textSize="@dimen/detail_size"
                 android:layout_columnWeight="8"
                 android:layout_gravity="fill"
-                tools:text="19" />
+                tools:text="@string/number" />
 
             <TextView
                 android:id="@+id/detail_grades_textview"
@@ -106,7 +106,7 @@
                 android:textSize="@dimen/detail_size"
                 android:layout_columnWeight="8"
                 android:layout_gravity="fill"
-                tools:text="19" />
+                tools:text="@string/number" />
 
 
             <TextView
@@ -130,7 +130,7 @@
                 android:textSize="@dimen/detail_size"
                 android:layout_columnWeight="8"
                 android:layout_gravity="fill"
-                tools:text="19" />
+                tools:text="@string/number" />
 
         </GridLayout>
 

@@ -34,6 +34,7 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolView
     }
 
 
+    //Updating our UI whenever new data is available, remove old and renew
     public void setData(ArrayList<School> schooldata){
         remove();
         for(School school : schooldata){
@@ -48,6 +49,7 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolView
         notifyDataSetChanged();
     }
 
+    //adding data here
     private void add(School school){
         synchronized (mSchool){
             SchoolItemList.add(school);
@@ -56,12 +58,15 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolView
     }
     @Override
     public SchoolViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        //initializing  our view with rowlayout id of our layout in schoolfragment.
         View view = LayoutInflater.from(parent.getContext()).inflate(rowlayout, parent, false);
         return new SchoolViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final SchoolViewHolder holder, int position) {
+
+        //passing objects and getting our view positions.
         final School mSchoolItems = SchoolItemList.get(position);
         holder.items = mSchoolItems;
 
@@ -72,6 +77,7 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolView
             }
         });
 
+        //ensuring our School method isn't null before passing information to holders.
         if(mSchoolItems != null) {
             holder.schoolname.setText(mSchoolItems.getTitle());
             holder.location.setText(mSchoolItems.getLocation());
@@ -79,6 +85,7 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolView
             holder.borough.setText(mSchoolItems.getBorough());
         }
 
+        //passing share action with school name and web object//
         holder.shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,6 +106,7 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolView
     }
 
 
+    //callback method for detailActivity
     public interface Callbacks{
         void OnClickListener(School mSchool, int position);
     }
@@ -115,6 +123,7 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolView
         public SchoolViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
+            //getting view ids to inflate
             schoolname = itemView.findViewById(R.id.school_name);
             location = itemView.findViewById(R.id.location);
             shareButton =  itemView.findViewById(R.id.share_button);

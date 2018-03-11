@@ -16,12 +16,15 @@ import retrofit2.Response;
 public class FetchSatAsync extends AsyncTask<String, Void, Sat> {
     public static final String TAG = FetchSatAsync.class.getSimpleName();
     private final Listener mListener;
+
+    //data transfer pojo initialized
     private  Sat model = new Sat();
     public FetchSatAsync(Listener listener){
         this.mListener = listener;
     }
 
 
+    //initializing doinbackground to fetch Our ArrayList for SAT Scores and sort them by ID//
     @Override
     protected Sat doInBackground(String... params) {
         if(params == null){
@@ -41,6 +44,7 @@ public class FetchSatAsync extends AsyncTask<String, Void, Sat> {
                     }
                 }
 
+                //making sure we are getting dbn by logging our ids;
             Log.d(TAG, "model dbn Id : " +  " " + model.getDbn());
                 }
 
@@ -55,6 +59,8 @@ public class FetchSatAsync extends AsyncTask<String, Void, Sat> {
 
     @Override
     protected void onPostExecute(Sat sat) {
+
+        //making sure our data is not null before passing it to our onFetchFinished Method in DetailFragment//
         if(sat != null){
             mListener.onFetchFinished(sat);
         }else{

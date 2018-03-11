@@ -18,8 +18,9 @@
     <string name="reading">Average Reading Score</string>
     <string name="sat">Average SAT Scores</string>
     <string name="empty_list">empty array list</string>
-    <string name="unavailable">Unavailable</string>
+    <string name="unavailable"> Unavailable Information</string>
     <string name="unable">unable to fetch data</string>
     <string name="no_info">No Data Exist</string>
     <string name="school_name">School Name</string>
+    <string name="number">29</string>
 </resources>

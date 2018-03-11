@@ -32,6 +32,8 @@ public  class SchoolFragment extends Fragment {
     private ProgressBar mProgressbar;
     private ApiInterface apiService;
     private ArrayList<School> mSchool_List;
+
+    //callback interface for detailactivity.
     private SchoolAdapter.Callbacks mCallback;
 
     @Nullable
@@ -39,6 +41,8 @@ public  class SchoolFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.recycler_list, container, false);
 
+
+        //initializing recyclerview and arraylist here
         mRecyclerView = rootView.findViewById(R.id.recycler_lists);
         mProgressbar = rootView.findViewById(R.id.progress_bar);
 
@@ -46,6 +50,7 @@ public  class SchoolFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mSchool_List = new ArrayList<>();
 
+        //ensuring our state is restored after screen orientation, we passed our arraylist;
         if(savedInstanceState != null){
             if(savedInstanceState.containsKey(SCHOOL)){
                 mSchool_List = savedInstanceState.getParcelableArrayList(SCHOOL);
@@ -59,6 +64,8 @@ public  class SchoolFragment extends Fragment {
         return rootView;
     }
 
+
+    //Retrofit method to fetch School object Arraylist
     private void FetchSchools() {
         apiService = ApiClient.getClient().create(ApiInterface.class);
         Call<ArrayList<School>> call = apiService.getSchoolInformation();
@@ -66,6 +73,8 @@ public  class SchoolFragment extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<School>> call, Response<ArrayList<School>> response) {
                 int statusCode = response.code();
+
+                //using Retrofit bool SUC to ensure response is correct before passing objects into Arraylist.
                 if(response.isSuccessful()) {
                     mSchool_List = response.body();
                             Log.d(TAG, "response list : " + mSchool_List);
@@ -80,6 +89,7 @@ public  class SchoolFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ArrayList<School>> call, Throwable t) {
+                //set up an error catcher to make sure we know if network times out or other issues//
                 Log.d(TAG, "error message" + t.toString());
                 mProgressbar.setVisibility(View.VISIBLE);
             }
@@ -89,6 +99,7 @@ public  class SchoolFragment extends Fragment {
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        //parceable for restoring instance on screen orientation.
             outState.putParcelableArrayList(SCHOOL, null);
 
         super.onSaveInstanceState(outState);
@@ -96,6 +107,7 @@ public  class SchoolFragment extends Fragment {
 
 
     private void mCalllback(){
+        //arguments for detail activity passed here with view position//
         mCallback = new SchoolAdapter.Callbacks() {
             @Override
             public void OnClickListener(School mSchool, int position) {

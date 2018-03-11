@@ -1,5 +1,6 @@
 package com.emi.jonat.a20180307nycschool;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -8,6 +9,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by jonat on 3/7/2018.
  */
+
 
 public class School  implements Parcelable{
     @SerializedName("dbn")
@@ -71,6 +73,9 @@ public class School  implements Parcelable{
             return new School[size];
         }
     };
+
+    public School(Cursor cursor) {
+    }
 
     public String getWebUrl() {
         return webUrl;

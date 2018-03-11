@@ -12,6 +12,8 @@ import retrofit2.http.Path;
  */
 
 public interface ApiInterface {
+
+    //getting our data from Rest
     @GET("97mf-9njv.json")
     Call<ArrayList<School>> getSchoolInformation();
 

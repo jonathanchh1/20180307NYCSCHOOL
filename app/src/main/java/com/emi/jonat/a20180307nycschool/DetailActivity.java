@@ -13,6 +13,7 @@ import android.view.MenuItem;
 public class DetailActivity extends AppCompatActivity {
 
     public static final String Args = "arguments";
+    //initializing DetailFragment here--//
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private Toolbar mToolbar;
     @Override
@@ -26,10 +27,12 @@ public class DetailActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
 
+        //actionbar enabled for home back button
       ActionBar actionBar = getSupportActionBar();
         if(actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        //if our savedinstance is null our fragment will be passed//
          if(savedInstanceState == null){
                 fragmentManager.beginTransaction()
                         .add(R.id.detail_container, new DetailFragment())
@@ -40,6 +43,7 @@ public class DetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //implementing home button
         if(item.getItemId() == android.R.id.home){
             onBackPressed();
             return true;

@@ -36,7 +36,7 @@ public class Sat implements Parcelable {
     }
 
     public Sat() {
-
+        //empty constructor to allow us to access model data for update sych of UI.
     }
 
 
