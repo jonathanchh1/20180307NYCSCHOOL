@@ -1,16 +1,23 @@
 package com.emi.jonat.a20180307nycschool;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +39,10 @@ public  class SchoolFragment extends Fragment {
     private ProgressBar mProgressbar;
     private ApiInterface apiService;
     private ArrayList<School> mSchool_List;
+    private TextView EmptyState;
+    private Button btnRetry;
+    private SwipeRefreshLayout swipeContainer;
+    private SchoolAdapter mAdapter;
 
     //callback interface for detailactivity.
     private SchoolAdapter.Callbacks mCallback;
@@ -50,18 +61,70 @@ public  class SchoolFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mSchool_List = new ArrayList<>();
 
+        //views to handle any network connectivity issues;
+        btnRetry = (Button) rootView.findViewById(R.id.error_btn_retry);
+        EmptyState = (TextView) rootView.findViewById(R.id.empty_states);
+
+        //handling manual refresh of our view and triggering new data loading
+        swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //once the network request has completed successfully
+                FetchRefreshData();
+                swipeContainer.setRefreshing(false);
+            }
+        });
+
+        //Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+        //adding our data on network renew manually.
+        btnRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isNetworkAvailable(getContext())) {
+                    FetchSchools();
+                }
+            }
+        });
+
         //ensuring our state is restored after screen orientation, we passed our arraylist;
         if(savedInstanceState != null){
             if(savedInstanceState.containsKey(SCHOOL)){
                 mSchool_List = savedInstanceState.getParcelableArrayList(SCHOOL);
             }else{
-                FetchSchools();
+                if(isNetworkAvailable(getActivity())) {
+                    FetchSchools();
+                }
             }
         }
 
-        FetchSchools();
+
+        //making sure we have a network before calling our data.
+        if(isNetworkAvailable(getActivity())) {
+            FetchSchools();
+
+            btnRetry.setVisibility(View.GONE);
+            EmptyState.setVisibility(View.GONE);
+        }else{
+            btnRetry.setVisibility(View.VISIBLE);
+            EmptyState.setVisibility(View.VISIBLE);
+        }
+
         mCalllback();
         return rootView;
+    }
+
+    private void FetchRefreshData() {
+        mAdapter.clear();
+        //the data has come back, add new items
+        mAdapter.addAll(mSchool_List);
+        FetchSchools();
+        swipeContainer.setRefreshing(false);
     }
 
 
@@ -81,8 +144,12 @@ public  class SchoolFragment extends Fragment {
                             for(School school : mSchool_List) {
                                 Log.d(TAG, "dbn id : " + school.getDbn());
                             }
-                    mRecyclerView.setAdapter(new SchoolAdapter(mSchool_List, R.layout.school_content, getActivity(), mCallback));
+                    mAdapter = new SchoolAdapter(mSchool_List, R.layout.school_content, getActivity(), mCallback);
+                    mRecyclerView.setAdapter(mAdapter);
                     mProgressbar.setVisibility(View.GONE);
+                    btnRetry.setVisibility(View.GONE);
+                    EmptyState.setVisibility(View.GONE);
+
                 }
 
             }
@@ -92,10 +159,26 @@ public  class SchoolFragment extends Fragment {
                 //set up an error catcher to make sure we know if network times out or other issues//
                 Log.d(TAG, "error message" + t.toString());
                 mProgressbar.setVisibility(View.VISIBLE);
+                btnRetry.setVisibility(View.VISIBLE);
+                EmptyState.setVisibility(View.VISIBLE);
             }
 
         });
 
+    }
+
+    //method for checking our network state.
+    private boolean isNetworkAvailable(Context context){
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        assert connectivityManager != null;
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if(activeNetworkInfo == null){
+            Toast.makeText(getActivity(), getResources().getString(R.string.network), Toast.LENGTH_SHORT).show();
+        }
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {

@@ -24,4 +24,7 @@
     <string name="school_name">School Name</string>
     <string name="number">29</string>
     <string name="extra">Extracurricular Activities</string>
+    <string name="bus">Transportation</string>
+    <string name="network">Network Unavailable</string>
+    <string name="btn_retry">Please Try Again</string>
 </resources>

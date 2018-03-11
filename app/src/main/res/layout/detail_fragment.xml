@@ -151,7 +151,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/description"
                 android:textSize="@dimen/detail_sizes"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/detail_accent_label"
                 android:layout_gravity="center_horizontal"/>
 
         </LinearLayout>
@@ -192,13 +192,54 @@
             android:layout_height="wrap_content"
             android:text="@string/extra"
             android:textSize="@dimen/detail_sizes"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/detail_accent_label"
+            android:layout_gravity="center_horizontal"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/transport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bus"
+            android:background="@color/colorAccent"
+            android:gravity="center_horizontal"
+            android:textSize="@dimen/detail_size"
+            android:textColor="@android:color/black"
             android:layout_gravity="center_horizontal"/>
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/detail_horizontal_margin"
+        android:paddingRight="@dimen/detail_horizontal_margin"
+        android:paddingTop="@dimen/detail_horizontal_margin"
+        android:paddingBottom="@dimen/detail_horizontal_margin">
+
+        <TextView
+            android:id="@+id/bus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bus"
+            android:textSize="@dimen/detail_sizes"
+            android:textColor="@color/detail_accent_label"
+            android:layout_gravity="center_horizontal"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -217,7 +258,7 @@
 
 
     <LinearLayout
-        android:id="@+id/linearLayout4"
+        android:id="@+id/linearLayout6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">

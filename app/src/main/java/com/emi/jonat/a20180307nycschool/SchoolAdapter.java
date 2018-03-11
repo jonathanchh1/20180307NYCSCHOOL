@@ -42,11 +42,28 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolView
         }
     }
 
+
+    //updating on data removed.
     private void remove(){
         synchronized (mSchool){
             SchoolItemList.clear();
         }
         notifyDataSetChanged();
+    }
+
+
+    //clearing data
+    public void clear() {
+        while (getItemCount() > 0){
+            remove();
+        }
+    }
+
+//refreshing data.
+    public void addAll(ArrayList<School> mSchool_list) {
+        for(School Models : mSchool_list){
+            add(Models);
+        }
     }
 
     //adding data here
@@ -104,6 +121,7 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolView
     public int getItemCount() {
         return SchoolItemList.size();
     }
+
 
 
     //callback method for detailActivity

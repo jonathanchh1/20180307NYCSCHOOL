@@ -37,4 +37,5 @@
     <dimen name="row_padding_vertical">14dp</dimen>
     <dimen name="detail_sizes">15sp</dimen>
     <dimen name="empty_height">500dp</dimen>
+    <dimen name="tryconnect">180dp</dimen>
 </resources>

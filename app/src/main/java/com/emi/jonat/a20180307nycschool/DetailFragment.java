@@ -41,6 +41,7 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
  private TextView detail_interest;
  private TextView interest;
  private TextView description;
+ private TextView bus;
  private TextView NData;
  private LayoutInflater mLayoutInflater;
  private SatAdapter satAdapter;
@@ -103,6 +104,7 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
             }
         }
 
+        LoadData(mSchool);
         FetchSat(rootView);
         return rootView;
     }
@@ -135,13 +137,18 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
         detail_phone_number = view.findViewById(R.id.detail_phone_number_textview);
         phone_number = view.findViewById(R.id.phone_number);
         Extra = view.findViewById(R.id.extracu);
+        bus = view.findViewById(R.id.bus);
         detail_grades = view.findViewById(R.id.detail_grades_textview);
         grades = view.findViewById(R.id.grades);
         detail_interest = view.findViewById(R.id.detail_interest_textview);
         interest = view.findViewById(R.id.interest);
         description = view.findViewById(R.id.description);
         NData = view.findViewById(R.id.empty_state);
+        LoadData(school);
+    }
 
+    ///loading our detail into views;
+    private void LoadData(School school){
         //ensuring our data is not null before passing values to views.
         if(school != null){
             String mtitle = school.getTitle();
@@ -151,14 +158,13 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
             String minterest = school.getInterest();
             String mdescription = school.getDescription();
             String mExtra = school.getExtraCurri();
+            String Bus = school.getBus();
 
             if(mtitle != null) {
-                SchoolName.setText(school.getTitle());
+                SchoolName.setText(mtitle);
             }else {
                 SchoolName.setText(getResources().getString(R.string.unavailable));
             }
-
-            detail_campus.setText(getResources().getString(R.string.campus));
 
             if(mcampus != null) {
                 campus.setText(mcampus);
@@ -166,14 +172,11 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
                 campus.setText(getResources().getString(R.string.unavailable));
             }
 
-            detail_phone_number.setText(getResources().getString(R.string.phone));
-
             if(phoneNumber != null) {
                 phone_number.setText(phoneNumber);
             }else{
                 phone_number.setText(getResources().getString(R.string.unavailable));
             }
-            detail_grades.setText(getResources().getString(R.string.grades));
 
             if(mgrades != null) {
                 grades.setText(mgrades);
@@ -181,7 +184,6 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
                 grades.setText(getResources().getString(R.string.unavailable));
             }
 
-            detail_interest.setText(getResources().getString(R.string.specialize));
 
             if(minterest != null) {
                 interest.setText(minterest);
@@ -201,10 +203,19 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
             }else{
                 Extra.setText(getResources().getString(R.string.unavailable));
             }
+
+            if(Bus != null){
+                bus.setText(Bus);
+            }else{
+                bus.setText(getResources().getString(R.string.unavailable));
+            }
         }
 
+        detail_campus.setText(getResources().getString(R.string.campus));
+        detail_phone_number.setText(getResources().getString(R.string.phone));
+        detail_grades.setText(getResources().getString(R.string.grades));
+        detail_interest.setText(getResources().getString(R.string.specialize));
     }
-
 
     @Override
     public void onFetchFinished(Sat sat) {

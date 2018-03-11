@@ -34,6 +34,8 @@ public class School  implements Parcelable{
     private String campus;
     @SerializedName("overview_paragraph")
     private String description;
+    @SerializedName("bus")
+    private String bus;
     @SerializedName("advancedplacement_courses")
     private String AdvancePlacement_Courses;
     @SerializedName("website")
@@ -58,6 +60,7 @@ public class School  implements Parcelable{
         location = in.readString();
         campus = in.readString();
         description = in.readString();
+        bus = in.readString();
         AdvancePlacement_Courses = in.readString();
         webUrl = in.readString();
     }
@@ -74,7 +77,13 @@ public class School  implements Parcelable{
         }
     };
 
-    public School(Cursor cursor) {
+
+    public String getBus() {
+        return bus;
+    }
+
+    public void setBus(String bus) {
+        this.bus = bus;
     }
 
     public String getWebUrl() {
@@ -201,6 +210,7 @@ public class School  implements Parcelable{
         dest.writeString(location);
         dest.writeString(campus);
         dest.writeString(description);
+        dest.writeString(bus);
         dest.writeString(AdvancePlacement_Courses);
         dest.writeString(webUrl);
     }
