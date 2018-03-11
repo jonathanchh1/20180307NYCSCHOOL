@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">NYC SCHOOLS</string>
+    <string name="description">The Pan American International High School is a diverse learning community of recently-immigrated English Language Learners (ELLs). Our primary focus is English language development, while providing opportunities for students to enhance their Spanish language skills. Our partnerships with organizations such as Urban Arts cultivate the leadership of students in their communities through service, learning projects, internships, and the arts. We are committed to creating an environment that celebrates studentsÂ’ individual identities while preparing them to be successful in college and become productive members of the global community</string>
+    <string name="item_title">School Name</string>
+    <string name="campus">campus location</string>
+    <string name="borough">borough</string>
+    <string name="address">school location is going to go here</string>
+    <string name="location">Location</string>
+    <string name="borou">Borough</string>
+    <string name="city">City</string>
+    <string name="grades">Grades</string>
+    <string name="specialize">Specialization</string>
+    <string name="descriptions">Phone Number</string>
+    <string name="phone">Phone Number</string>
+    <string name="takers">Test Takers</string>
+    <string name="math">Average Math Score</string>
+    <string name="writing">Average Writing Score</string>
+    <string name="reading">Average Reading Score</string>
+    <string name="sat">Average SAT Scores</string>
+    <string name="empty_list">empty array list</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="unable">unable to fetch data</string>
+    <string name="no_info">No Data Exist</string>
+    <string name="school_name">School Name</string>
+</resources>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/row_padding_vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/row_padding_vertical">
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnCount="2"
+        android:rowCount="2">
+
+        <TextView
+            android:id="@+id/Takers"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:gravity="center_vertical"
+            android:text="@string/takers"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/detail_accent_label"
+            android:layout_columnWeight="20"
+            android:layout_gravity="fill"
+            android:layout_rowWeight="1" />
+
+        <TextView
+            android:id="@+id/takers_title"
+            android:layout_width="0dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/detail_size"
+            android:layout_columnWeight="5"
+            android:layout_gravity="fill"
+            tools:text="19" />
+
+        <TextView
+            android:id="@+id/detail_math_textview"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:gravity="center_vertical"
+            android:text="@string/math"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/detail_accent_label"
+            android:layout_columnWeight="20"
+            android:layout_gravity="fill"
+            android:layout_rowWeight="1" />
+
+        <TextView
+            android:id="@+id/math"
+            android:layout_width="0dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/detail_size"
+            android:layout_columnWeight="5"
+            android:layout_gravity="fill"
+            tools:text="19" />
+
+        <TextView
+            android:id="@+id/detail_writing_textview"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:gravity="center_vertical"
+            android:text="@string/writing"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/detail_accent_label"
+            android:layout_columnWeight="20"
+            android:layout_gravity="fill"
+            android:layout_rowWeight="1" />
+
+        <TextView
+            android:id="@+id/writing"
+            android:layout_width="0dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/detail_size"
+            android:layout_columnWeight="5"
+            android:layout_gravity="fill"
+            tools:text="19" />
+
+        <TextView
+            android:id="@+id/detail_reading_textview"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:gravity="center_vertical"
+            android:text="@string/reading"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/detail_accent_label"
+            android:layout_columnWeight="20"
+            android:layout_gravity="fill"
+            android:layout_rowWeight="1" />
+
+        <TextView
+            android:id="@+id/reading"
+            android:layout_width="0dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/detail_size"
+            android:layout_columnWeight="5"
+            android:layout_gravity="fill"
+            tools:text="19" />
+
+
+    </GridLayout>
+
+
+
+</LinearLayout>
+
