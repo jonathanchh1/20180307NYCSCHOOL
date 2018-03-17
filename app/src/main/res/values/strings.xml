@@ -27,4 +27,6 @@
     <string name="bus">Transportation</string>
     <string name="network">Network Unavailable</string>
     <string name="btn_retry">Please Try Again</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="search">Search</string>
 </resources>

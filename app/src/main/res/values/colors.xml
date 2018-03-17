@@ -17,5 +17,6 @@
     <color name="text_color_for_movie_overview">@android:color/black</color>
     <color name="text_background">@android:color/black</color>
     <color name="text_color_for_review_content">@android:color/black</color>
+    <color name="light_green">#a6e998</color>
 </resources>
 

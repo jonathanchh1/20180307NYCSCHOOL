@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -19,15 +21,17 @@ import java.util.List;
  * Created by jonat on 3/7/2018.
  */
 
-public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolViewHolder> {
+public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolViewHolder> implements Filterable{
     private final Callbacks mCallbacks;
     private final School mSchool = new School();
-    private ArrayList<School> SchoolItemList;
+    private ArrayList<School> mListFilterable;
+    private ArrayList<School> itemslist = new ArrayList<>();
     private int rowlayout;
     private Activity activity;
 
     public SchoolAdapter(ArrayList<School> mSchool, int school_content, FragmentActivity activity, Callbacks callbacks) {
-        this.SchoolItemList = mSchool;
+        this.mListFilterable = mSchool;
+        this.itemslist = mSchool;
         this.rowlayout = school_content;
         this.activity = activity;
         this.mCallbacks = callbacks;
@@ -46,7 +50,7 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolView
     //updating on data removed.
     private void remove(){
         synchronized (mSchool){
-            SchoolItemList.clear();
+            mListFilterable.clear();
         }
         notifyDataSetChanged();
     }
@@ -69,7 +73,7 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolView
     //adding data here
     private void add(School school){
         synchronized (mSchool){
-            SchoolItemList.add(school);
+            mListFilterable.add(school);
         }
         notifyDataSetChanged();
     }
@@ -84,9 +88,10 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolView
     public void onBindViewHolder(final SchoolViewHolder holder, int position) {
 
         //passing objects and getting our view positions.
-        final School mSchoolItems = SchoolItemList.get(position);
+        final School mSchoolItems = mListFilterable.get(position);
         holder.items = mSchoolItems;
 
+        //passing our views to onClick for detailfragment
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,9 +124,42 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolView
 
     @Override
     public int getItemCount() {
-        return SchoolItemList.size();
+       return mListFilterable == null ? 0 : mListFilterable.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    mListFilterable = itemslist;
+                } else {
+                    ArrayList<School> filteredList = new ArrayList<>();
+                    for (School row : itemslist) {
+                        // name match condition. this might differ depending on your requirement
+                        // here we are looking for name or phone number match
+                        if (row.getTitle().toLowerCase().toUpperCase().contains(charString.toLowerCase().toUpperCase()) || (row.getTitle().toUpperCase().toLowerCase().contains(charString.toUpperCase().toLowerCase())) ){
+                            filteredList.add(row);
+                        }
+                    }
+
+                    mListFilterable = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mListFilterable;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                mListFilterable = (ArrayList<School>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
 
 
     //callback method for detailActivity

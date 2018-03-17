@@ -287,4 +287,27 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/linearLayout7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/detail_horizontal_margin"
+        android:paddingRight="@dimen/detail_horizontal_margin"
+        android:paddingTop="@dimen/detail_horizontal_margin"
+        android:paddingBottom="@dimen/detail_horizontal_margin">
+
+        <com.google.android.gms.maps.MapView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/map_height"
+            android:id="@+id/mapview"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true" />
+
+
+
+    </LinearLayout>
+
+
 </LinearLayout>

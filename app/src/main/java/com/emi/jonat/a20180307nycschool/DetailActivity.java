@@ -41,6 +41,7 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //implementing home button

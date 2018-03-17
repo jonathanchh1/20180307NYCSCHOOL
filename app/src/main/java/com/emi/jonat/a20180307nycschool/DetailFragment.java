@@ -1,12 +1,17 @@
 package com.emi.jonat.a20180307nycschool;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.nfc.tech.Ndef;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,38 +19,58 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by jonat on 3/7/2018.
  */
 
-public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
- private final static String TAG = DetailFragment.class.getSimpleName();
- private School mSchool = new School();
- private String EXTRA_SAT = "sat";
- private View rootView;
- private ArrayList<Sat> satlist;
- private Sat satObject = new Sat();
- private TextView SchoolName;
- private TextView detail_campus;
- private TextView campus;
- private TextView detail_phone_number;
- private TextView phone_number;
-
- private TextView Extra;
- private TextView detail_grades;
- private TextView grades;
- private TextView detail_interest;
- private TextView interest;
- private TextView description;
- private TextView bus;
- private TextView NData;
- private LayoutInflater mLayoutInflater;
- private SatAdapter satAdapter;
- RecyclerView mRecyclerView;
+public class DetailFragment extends Fragment implements FetchSatAsync.Listener {
+    private final static String TAG = DetailFragment.class.getSimpleName();
+    private School mSchool = new School();
+    private String EXTRA_SAT = "sat";
+    private MapView mapView;
+    private View rootView;
+    private ArrayList<Sat> satlist;
+    private Sat satObject = new Sat();
+    private TextView SchoolName;
+    private TextView detail_campus;
+    private TextView campus;
+    private TextView detail_phone_number;
+    private TextView phone_number;
+    private final int ZOOM = 15;
+    private TextView Extra;
+    private TextView detail_grades;
+    private TextView grades;
+    private TextView detail_interest;
+    private TextView interest;
+    private TextView description;
+    private TextView bus;
+    private TextView NData;
+    private Bundle mBundle;
+    private LayoutInflater mLayoutInflater;
+    private SatAdapter satAdapter;
+    RecyclerView mRecyclerView;
 
 
     @Override
@@ -56,15 +81,24 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
         //inflating our appbar here and enabling features.
         CollapsingToolbarLayout appbarlayout = (CollapsingToolbarLayout)
                 activity.findViewById(R.id.toolbar_layout);
-        if(appbarlayout != null && activity instanceof  DetailActivity){
+        if (appbarlayout != null && activity instanceof DetailActivity) {
             appbarlayout.setTitleEnabled(false);
         }
 
     }
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //adding Bundle for maps
+        mBundle = savedInstanceState;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
 
         mLayoutInflater = inflater;
 
@@ -72,23 +106,29 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
         Bundle arguments = getArguments();
         Intent intent = getActivity().getIntent();
 
-        if(arguments != null || intent != null && intent.hasExtra(DetailActivity.Args)){
+        if (arguments != null || intent != null && intent.hasExtra(DetailActivity.Args)) {
             rootView = mLayoutInflater.inflate(R.layout.detail_fragment, container, false);
-            if(arguments != null) {
+            if (arguments != null) {
                 mSchool = getArguments().getParcelable(DetailActivity.Args);
-            }else{
+            } else {
                 mSchool = intent.getParcelableExtra(DetailActivity.Args);
             }
 
             //initializing all our views here.
             ViewsList(mSchool, rootView);
 
+
+            mapView = (MapView) rootView.findViewById(R.id.mapview);
+            mapView.onCreate(mBundle);
+            double lat = Double.parseDouble(mSchool.getLat());
+            double lg = Double.parseDouble(mSchool.getLongitude());
+            setMap(lat, lg);
+            Log.d(TAG, "school types : " + " " + lat + " " + lg);
             //setting up recyclerview with linearlayout
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(),
                     LinearLayoutManager.VERTICAL, false);
             satlist = new ArrayList<>();
             mRecyclerView = rootView.findViewById(R.id.mrecyclerview);
-
             mRecyclerView.setLayoutManager(linearLayoutManager);
             satAdapter = new SatAdapter(satlist);
             mRecyclerView.setAdapter(satAdapter);
@@ -96,10 +136,10 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
 
 
             //restoring our state here if screen is rotated and passing data.
-            if(savedInstanceState != null && savedInstanceState.containsKey(EXTRA_SAT)){
+            if (savedInstanceState != null && savedInstanceState.containsKey(EXTRA_SAT)) {
                 satlist = savedInstanceState.getParcelableArrayList(EXTRA_SAT);
 
-            }else{
+            } else {
                 FetchSat(rootView);
             }
         }
@@ -122,7 +162,7 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
         super.onSaveInstanceState(outState);
         satlist = satAdapter.getmSatList();
         //adding data for our state instance here
-        if(satlist != null || !satlist.isEmpty()){
+        if (satlist != null || !satlist.isEmpty()) {
             outState.putParcelableArrayList(EXTRA_SAT, null);
         }
 
@@ -130,7 +170,7 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
 
 
     //our view Method, getting all ids of our views.
-    private void ViewsList(School school, View view){
+    private void ViewsList(School school, View view) {
         SchoolName = view.findViewById(R.id.detail_title);
         detail_campus = view.findViewById(R.id.detail_campus_textview);
         campus = view.findViewById(R.id.campus);
@@ -148,9 +188,10 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
     }
 
     ///loading our detail into views;
-    private void LoadData(School school){
-        //ensuring our data is not null before passing values to views.
-        if(school != null){
+    private void LoadData(School school) {
+
+        //ensuring our data is not null before passing values to views
+        if (school != null) {
             String mtitle = school.getTitle();
             String mcampus = school.getCampus();
             String phoneNumber = school.getPhoneNumber();
@@ -160,53 +201,53 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
             String mExtra = school.getExtraCurri();
             String Bus = school.getBus();
 
-            if(mtitle != null) {
+            if (mtitle != null) {
                 SchoolName.setText(mtitle);
-            }else {
+            } else {
                 SchoolName.setText(getResources().getString(R.string.unavailable));
             }
 
-            if(mcampus != null) {
+            if (mcampus != null) {
                 campus.setText(mcampus);
-            }else{
+            } else {
                 campus.setText(getResources().getString(R.string.unavailable));
             }
 
-            if(phoneNumber != null) {
+            if (phoneNumber != null) {
                 phone_number.setText(phoneNumber);
-            }else{
+            } else {
                 phone_number.setText(getResources().getString(R.string.unavailable));
             }
 
-            if(mgrades != null) {
+            if (mgrades != null) {
                 grades.setText(mgrades);
-            } else{
+            } else {
                 grades.setText(getResources().getString(R.string.unavailable));
             }
 
 
-            if(minterest != null) {
+            if (minterest != null) {
                 interest.setText(minterest);
-            }else {
+            } else {
                 interest.setText(getResources().getString(R.string.unavailable));
             }
 
             if (mdescription != null) {
                 description.setText(mdescription);
 
-            }else {
+            } else {
                 description.setText(getResources().getString(R.string.unavailable));
             }
 
-            if(mExtra != null){
+            if (mExtra != null) {
                 Extra.setText(mExtra);
-            }else{
+            } else {
                 Extra.setText(getResources().getString(R.string.unavailable));
             }
 
-            if(Bus != null){
+            if (Bus != null) {
                 bus.setText(Bus);
-            }else{
+            } else {
                 bus.setText(getResources().getString(R.string.unavailable));
             }
         }
@@ -224,16 +265,51 @@ public class DetailFragment extends Fragment implements FetchSatAsync.Listener{
             //making sure our dbn is not null before passing  objects to adapter
             if (sat.getDbn() != null) {
                 satAdapter.add(sat);
-            } else{
+            } else {
                 //dbn is null or no data is found, we pass our empty state to indicate unavailability//
                 NData.setVisibility(View.VISIBLE);
             }
 
-        }else {
+        } else {
 
             //if async fails, we will be notified by passing an error message.
-                Log.d(TAG, getResources().getString(R.string.unable));
-            }
+            Log.d(TAG, getResources().getString(R.string.unable));
+        }
 
     }
-}
+
+    public void setMap(final double latitude, final double longitude){
+        mapView.onCreate(mBundle);
+        mapView.onResume();
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                final GoogleMap map = googleMap;
+
+                MapsInitializer.initialize(getContext());
+                //change map type as your requirements
+                map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                LatLng marker = new LatLng(latitude, longitude);
+                //move the camera default animation
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker, ZOOM));
+
+                map.setMinZoomPreference(10);
+                //add radius
+                CircleOptions circleOptions = new CircleOptions();
+                circleOptions.center(marker);
+                circleOptions.radius(300);
+                circleOptions.fillColor(getResources().getColor(R.color.light_green));
+                circleOptions.strokeColor(Color.BLUE);
+                circleOptions.strokeWidth(4);
+                map.addCircle(circleOptions);
+
+                //add a default marker in the position
+              Marker m =  map.addMarker(new MarkerOptions().position(marker).title(mSchool.getTitle())
+                      .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+              m.showInfoWindow();
+            }
+        });
+    }
+
+    }
+

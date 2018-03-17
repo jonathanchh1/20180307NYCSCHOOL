@@ -7,11 +7,16 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -47,6 +52,10 @@ public  class SchoolFragment extends Fragment {
     //callback interface for detailactivity.
     private SchoolAdapter.Callbacks mCallback;
 
+    public SchoolFragment() {
+        setHasOptionsMenu(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -56,9 +65,10 @@ public  class SchoolFragment extends Fragment {
         //initializing recyclerview and arraylist here
         mRecyclerView = rootView.findViewById(R.id.recycler_lists);
         mProgressbar = rootView.findViewById(R.id.progress_bar);
-
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        //initializing arrayList
         mSchool_List = new ArrayList<>();
 
         //views to handle any network connectivity issues;
@@ -93,11 +103,11 @@ public  class SchoolFragment extends Fragment {
         });
 
         //ensuring our state is restored after screen orientation, we passed our arraylist;
-        if(savedInstanceState != null){
-            if(savedInstanceState.containsKey(SCHOOL)){
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(SCHOOL)) {
                 mSchool_List = savedInstanceState.getParcelableArrayList(SCHOOL);
-            }else{
-                if(isNetworkAvailable(getActivity())) {
+            } else {
+                if (isNetworkAvailable(getActivity())) {
                     FetchSchools();
                 }
             }
@@ -105,18 +115,24 @@ public  class SchoolFragment extends Fragment {
 
 
         //making sure we have a network before calling our data.
-        if(isNetworkAvailable(getActivity())) {
+        if (isNetworkAvailable(getActivity())) {
             FetchSchools();
 
             btnRetry.setVisibility(View.GONE);
             EmptyState.setVisibility(View.GONE);
-        }else{
+        } else {
             btnRetry.setVisibility(View.VISIBLE);
             EmptyState.setVisibility(View.VISIBLE);
         }
 
         mCalllback();
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FetchSchools();
     }
 
     private void FetchRefreshData() {
@@ -138,12 +154,12 @@ public  class SchoolFragment extends Fragment {
                 int statusCode = response.code();
 
                 //using Retrofit bool SUC to ensure response is correct before passing objects into Arraylist.
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     mSchool_List = response.body();
-                            Log.d(TAG, "response list : " + mSchool_List);
-                            for(School school : mSchool_List) {
-                                Log.d(TAG, "dbn id : " + school.getDbn());
-                            }
+                    Log.d(TAG, "response list : " + mSchool_List);
+                    for (School school : mSchool_List) {
+                        Log.d(TAG, "dbn id : " + school.getDbn());
+                    }
                     mAdapter = new SchoolAdapter(mSchool_List, R.layout.school_content, getActivity(), mCallback);
                     mRecyclerView.setAdapter(mAdapter);
                     mProgressbar.setVisibility(View.GONE);
@@ -168,24 +184,67 @@ public  class SchoolFragment extends Fragment {
     }
 
     //method for checking our network state.
-    private boolean isNetworkAvailable(Context context){
+    private boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         assert connectivityManager != null;
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
-        if(activeNetworkInfo == null){
+        if (activeNetworkInfo == null) {
             Toast.makeText(getActivity(), getResources().getString(R.string.network), Toast.LENGTH_SHORT).show();
         }
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         //parceable for restoring instance on screen orientation.
-            outState.putParcelableArrayList(SCHOOL, null);
+        outState.putParcelableArrayList(SCHOOL, null);
 
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main_menu, menu);
+        MenuItem menuSearch = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuSearch);
+        search(searchView);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void search(SearchView searchView) {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if(isNetworkAvailable(getActivity())){
+                    //we clear data to add our query
+                    mAdapter.getFilter().filter(query);
+                }else{
+                    EmptyState.setVisibility(View.VISIBLE);
+                }
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                //we will do the same on text changed.
+                if(isNetworkAvailable(getActivity())){
+                    mAdapter.getFilter().filter(newText);
+                }else{
+                    EmptyState.setVisibility(View.VISIBLE);
+                }
+                return true;
+            }
+        });
     }
 
 
